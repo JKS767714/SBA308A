@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIIF Image Display</title>
+</head>
+<body>
+    <div id="artworkInfo"></div>
+
+    <script>
+        document.addEventListener('click', async () => {
+            const artworkInfo = document.getElementById("artworkInfo");
+            const artworkId = 27992; // ID for "La Grande Jatte"
+            const apiUrl = `https://api.artic.edu/api/v1/artworks/${artworkId}?fields=id,title,image_id`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                // Log the data to the console to view the JSON response
+                console.log(data);
+
+                // Get the necessary fields from the response
+                const artwork = data.data;
+                const iiifBaseUrl = data.config.iiif_url;
+                const imageId = artwork.image_id;
+
+                // Construct the IIIF Image URL
+                const imageUrl = `${iiifBaseUrl}/${imageId}/full/843,/0/default.jpg`;
+
+                // Display the artwork information and image
+                artworkInfo.innerHTML = `
+                    <h2>${artwork.title}</h2>
+                    <img src="${imageUrl}" alt="${artwork.title}" />
+                `;
+            } catch (error) {
+                console.error('Error fetching artwork data:', error);
+            }
+        });
+    </script>
+</body>
+</html>
